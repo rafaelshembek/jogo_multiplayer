@@ -8,7 +8,7 @@ const app = express();
 const server = http.createServer(app)
 const io = socketIo(server);
 
-app.use(express.static(parth.join(__dirname, 'public')));
+app.use(express.static('public'));
 
 const players = {}
 
