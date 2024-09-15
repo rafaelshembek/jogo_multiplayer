@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        canvas {
+            border: 1px solid black;
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+
+<body>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = 600;
+            canvas.height = 600;
+            document.body.appendChild(canvas);
+            const ctx = canvas.getContext('2d');
+            const socket = io();
+
+            const keys = {};
+
+            //Adiciona event listeners para as teclas
+            window.addEventListener('keydown', (e) => {
+                keys[e.key] = true;
+            });
+            window.addEventListener('keyup', (e) => {
+                keys[e.key] = false;
+            });
+            function update() {
+                if (keys['ArrowUp']) {
+                    socket.emit('move', 'up');
+                }
+                if (keys['ArrowDown']) {
+                    socket.emit('move', 'down');
+                }
+                if (keys['ArrowLeft']) {
+                    socket.emit('move', 'left');
+                }
+                if (keys['ArrowRight']) {
+                    socket.emit('move', 'right');
+                }
+            }
+
+            function draw(players) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                for (const id in players) {
+                    const player = players[id];
+                    ctx.fillStyle = player.color;
+                    ctx.fillRect(player.x, player.y, 50, 50);
+                }
+            }
+
+            socket.on('init', (players) => {
+                draw(players);
+            });
+
+            socket.on('update', (players) => {
+                draw(players);
+            });
+
+            function gameLoop() {
+                update();
+                requestAnimationFrame(gameLoop);
+            }
+
+            gameLoop();
+
+        })
+    </script>
+</body>
+
+</html>
