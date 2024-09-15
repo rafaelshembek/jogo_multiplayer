@@ -2,12 +2,13 @@ const { match } = require('assert');
 const express = require('express')
 const http = require('http')
 const socketIo = require('socket.io');
+const path = require('path');
 
 const app = express();
 const server = http.createServer(app)
 const io = socketIo(server);
 
-app.use(express.static('public'));
+app.use(express.static(parth.join(__dirname, 'public')));
 
 const players = {}
 
